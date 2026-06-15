@@ -63,6 +63,7 @@ Target:
 
 # Streamlit LINK
 https://ai-fraud-monotoring-system.streamlit.app/
+To see the output must dowmload the sample_fraud.csv file
 
 ## Author
 Nagalla Venkata Krishna
