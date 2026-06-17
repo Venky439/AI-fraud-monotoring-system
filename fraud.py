@@ -1,5 +1,17 @@
 import streamlit as st
 import pandas as pd
+import google.generativeai as genai
+
+# Integrating the google gemini
+genai.configure(
+    api_key=st.secrets["GEMINI_API_KEY"])
+
+model_ai = genai.GenerativeModel(
+    "gemini-2.5-flash"
+)
+
+#for model in genai.list_models():
+    #print(model.name)
 
 st.title("AI Powered Fraud Risk Monitoring System")
 st.write("Select a Page from a sidebar")
@@ -384,19 +396,110 @@ st.download_button(
     mime="text/csv"
 )
 
-st.header("AI Generated Insights")
-
 highest_fraud_hour = fraud_hours.idxmax()
+highest_category = fraud_category.idxmax()
+highest_state = top_states.index[0]
+
+
+# Button for AI
+if st.button("Generate AI Fraud Report"):
+
+    prompt = f"""
+    You are a Fraud Analyst.
+
+    Analyze the following fraud monitoring results:
+
+    Highest Fraud Hour: {highest_fraud_hour}
+    Highest Fraud Category: {highest_category}
+    Highest Fraud State: {highest_state}
+
+    Provide:
+    1. Fraud Summary
+    2. Risk Assessment
+    3. Business Recommendation
+
+    Keep the report professional.
+    """
+
+    response = model_ai.generate_content(prompt)
+
+    st.subheader("AI Fraud Investigation Report")
+    st.write(response.text)
+
+st.subheader("Ask AI About Fraud Data")
+
+user_question = st.text_input(
+    "Ask a question about fraud data"
+)
+
+if st.button("Ask AI"):
+
+    prompt = f"""
+    Fraud Data Summary:
+
+    Highest Fraud Hour: {highest_fraud_hour}
+    Highest Fraud Category: {highest_category}
+    Highest Fraud State: {highest_state}
+
+    User Question:
+    {user_question}
+
+    Answer professionally.
+    """
+
+    response = model_ai.generate_content(
+        prompt
+    )
+    st.write(response.text)
+
+if st.button("Generate AI Recommendations"):
+
+    prompt = f"""
+    Fraud Analysis:
+
+    Highest Fraud Hour: {highest_fraud_hour}
+    Highest Fraud Category: {highest_category}
+    Highest Fraud State: {highest_state}
+
+    Give 5 actionable fraud prevention recommendations.
+    """
+
+    response = model_ai.generate_content(
+        prompt
+    )
+
+    st.subheader("AI Recommendations")
+    st.write(response.text)
+
+if st.button("Generate Executive Summary"):
+
+    prompt = f"""
+    Create an executive summary for senior management.
+
+    Highest Fraud Hour: {highest_fraud_hour}
+    Highest Fraud Category: {highest_category}
+    Highest Fraud State: {highest_state}
+
+    Keep it under 150 words.
+    """
+
+    response = model_ai.generate_content(
+        prompt
+    )
+
+    st.subheader("Executive Summary")
+    st.write(response.text)
+
+
+st.header("AI Generated Insights")
 st.write(
     f"Highest fraud activity is observed at hour {highest_fraud_hour}."
 )
 
-highest_category = fraud_category.idxmax()
 st.write(
     f"Most fraud-prone category is {highest_category}."
 )
 
-highest_state = top_states.index[0]
 st.write(
     f"State with highest fraud rate is {highest_state}."
 )
