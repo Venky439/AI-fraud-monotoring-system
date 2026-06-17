@@ -14,7 +14,7 @@ model_ai = genai.GenerativeModel(
     #print(model.name)
 
 st.title("AI Powered Fraud Risk Monitoring System")
-st.write("Select a Page from a sidebar")
+
 
 # Loading the data
 uploaded_file = st.file_uploader(
